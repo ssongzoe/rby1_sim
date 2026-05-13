@@ -15,7 +15,7 @@ from scipy.spatial.transform import Rotation as R
 # =========================
 XML_PATH = "./scene_rby1a_1.2.xml"
 URDF_PATH = "./urdf/model_v1.2_camera.urdf"
-DATA_PATH = "/home/soyounglee/datasets/data_foundry_test/data/chunk-000/file-000.parquet"
+DATA_PATH = "/home/soyounglee/datasets/test_good/data/chunk-000/file-000.parquet"
 
 
 # =========================

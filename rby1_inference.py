@@ -204,47 +204,6 @@ def center_square_crop_rgb(frame_rgb: np.ndarray) -> np.ndarray:
     return frame_rgb[top:top+s, left:left+s]
 
 
-def chw_from_bgr_dino(frame_bgr: np.ndarray, out_size: int = 224) -> np.ndarray:
-    frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-    frame_rgb = center_square_crop_rgb(frame_rgb)
-    frame_rgb = cv2.resize(frame_rgb, (out_size, out_size), interpolation=cv2.INTER_AREA)
-    frame_chw = np.transpose(frame_rgb, (2, 0, 1)).astype(np.float32)
-    return frame_chw
-
-
-def old_chw_from_bgr_dino(frame_bgr: np.ndarray) -> np.ndarray:
-    """
-    Old training pipeline:
-    BGR -> RGB -> Resize(256) -> CenterCrop(224) -> CHW float32
-
-    No normalization here (handled by preprocess).
-    """
-    # BGR -> RGB
-    frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-
-    # Resize: shorter side → 256 (torchvision Resize(256) behavior)
-    h, w = frame_rgb.shape[:2]
-    if h < w:
-        new_h = 256
-        new_w = int(w * 256 / h)
-    else:
-        new_w = 256
-        new_h = int(h * 256 / w)
-
-    frame_resized = cv2.resize(frame_rgb, (new_w, new_h), interpolation=cv2.INTER_AREA)
-
-    # CenterCrop(224,224)
-    h2, w2 = frame_resized.shape[:2]
-    top = (h2 - 224) // 2
-    left = (w2 - 224) // 2
-    frame_cropped = frame_resized[top:top+224, left:left+224]
-
-    # HWC -> CHW
-    frame_chw = np.transpose(frame_cropped, (2, 0, 1)).astype(np.float32)
-
-    return frame_chw
-
-
 class CachedVideoReader:
     def __init__(self, path: str):
         self.path = path
